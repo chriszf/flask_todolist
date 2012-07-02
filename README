@@ -1,0 +1,144 @@
+Description:
+This is a basic todo-list application to illustrate 'CRUD' principles.
+
+Setup/installation:
+1. Set up virtualenv
+
+    Meringue:todolist chriszf$ virtualenv --no-site-packages --clear env
+    Meringue:todolist chriszf$ source env/bin/activate
+    Meringue:todolist chriszf$ source env/bin/activate
+    (env)Meringue:todolist chriszf$ 
+
+2. Set up the packages needed
+
+    (env)Meringue:todolist chriszf$ pip install -r requirements.txt 
+
+
+3. Run the database setup
+    (env)Meringue:todolist chriszf$ ./db_setup.py 
+    Created the todolist database
+    (env)Meringue:todolist chriszf$ 
+
+
+Experimenting with the task creation and deletion:
+    
+Start a python session while your virtual environment is active and do the
+following import.
+    
+    eg:
+    (env)Meringue:todolist chriszf$ python
+    Python 2.7.1 (r271:86832, Jun 25 2011, 05:09:01) 
+    [GCC 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2335.15.00)] on darwin
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import todolist.model as m
+
+To create a new task, make an instance of the Task() class. The Task
+initializer looks like this:
+
+    model.Task(title)
+    The title of the task is a string 64 characters or less.
+
+    eg:
+    >>> t = m.Task("Buy milk")
+    >>> print t
+    Task -1:Buy milk Not Complete.
+
+Notice the task has task id of -1. This is because the task must first be saved
+to the database before receiving an id number.
+
+To save to the database, is a two-step process, similar to the git commit
+process. If this is a brand new Task, it must be first added to the database
+for consideration.
+
+    model.add(task)
+    This adds a task to be considered for saving. This function should only be
+    used for new Tasks. If the Task has been added before, or has been pulled
+    from the database, it is not necessary to call this function.
+
+    eg:
+    >>> m.add(t)
+    >>> 
+
+After 'adding' the task, the next step is to save all outstanding changes.
+    
+    model.save_all()
+    This takes all new tasks that have been added and all existing tasks that
+    have been changed and commits the change to the database. New tasks that
+    are saved are assigned an id number at this time.
+
+    eg:
+    >>> m.save_all()
+    >>> print t
+    Task 1:Buy milk Not Complete.
+
+
+Updating a task:
+
+Here is the documentation for the class task.
+
+    class Task
+
+    Task(title, notes = '')
+    Create a new task with a title text being set to title. Task titles are
+    strings up to 64 characters in length. A task can also have notes attached.
+    Notes are strings of arbitrary length.
+
+    The Task class supports the following attributes
+
+    id
+    The id is an integer that is automatically created and assigned to the task
+    when it is saved to the database. It is a number unique to a specific task
+    and should not be modified.
+
+    title
+    The title is a string up to 64 characters long
+
+    notes
+    The notes attribute is a string arbitrarily long. It is not required.
+
+    done
+    The done attribute is a boolean representing whether or not a task is
+    complete.
+
+    created_at
+    A datetime representing the date of creation.
+
+    completed_at
+    A datetime representing the date of completion.
+    
+    Task.complete()
+    Complete a task by marking it done and setting the
+    completed_at date to the current time.
+
+    # Class methods
+    Task.query
+    Interface to creating a database query, not useful without accessing the
+    attributes on query.
+
+    Task.query.all()
+    Returns all the existing tasks from the database as a list.
+
+    Task.query.get(id)
+    Returns a task with the given numeric id from the database. If the given
+    task id does not exist, returns None.
+
+When updating an existing task, you must call model.save_all() to actually save the changes to the database.
+
+    eg:
+    >>> t = m.Task.query.get(1)
+    >>> print t
+    Task 1:Finish this todolist application. Not Complete.
+    >>> t.title = "No, seriously, finish this application."
+    >>> t.complete()
+    >>> m.save_all()
+    >>> print t
+    Task 1:Finish this todolist application. Completed.
+    >>> print t.completed_at
+    2012-07-02 14:28:16.405071
+
+
+Getting started
+
+The webapp code is in the file todolist/webapp.py. Right now, there are three
+'views' listed, one for the index, one for the editing anew task, and one for
+saving a task. We will be filling those in.
