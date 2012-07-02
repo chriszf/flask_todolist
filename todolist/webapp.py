@@ -5,11 +5,7 @@ from model import app, Task
 def home():
     return_str = ""
     tasks = Task.query.all()
-    
-    for task in tasks:
-        return_str += "%s"%task + "<br>"
-
-    return return_str
+    return render_template("list_tasks.html", tasks=tasks)
 
 
 @app.route("/add", methods=["GET"])

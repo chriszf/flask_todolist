@@ -6,7 +6,6 @@ Setup/installation:
 
     Meringue:todolist chriszf$ virtualenv --no-site-packages --clear env
     Meringue:todolist chriszf$ source env/bin/activate
-    Meringue:todolist chriszf$ source env/bin/activate
     (env)Meringue:todolist chriszf$ 
 
 2. Set up the packages needed
